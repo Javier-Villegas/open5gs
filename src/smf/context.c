@@ -1109,6 +1109,7 @@ static bool compare_ue_info(ogs_pfcp_node_t *node, smf_sess_t *sess)
     ogs_assert(node);
     ogs_assert(sess);
     ogs_assert(sess->session.name);
+    ogs_info("Number of DNN: %d\nNumber of CellID: %d\nNumber of NSSAI: %d\n", node->num_of_dnn, node->num_of_nr_cell_id, node->num_of_nssai);
 
     for (i = 0; i < node->num_of_dnn; i++)
         if (ogs_strcasecmp(node->dnn[i], sess->session.name) == 0) {
