@@ -1112,7 +1112,7 @@ static bool compare_ue_info(ogs_pfcp_node_t *node, smf_sess_t *sess)
 
     for (i = 0; i < node->num_of_dnn; i++)
         if (ogs_strcasecmp(node->dnn[i], sess->session.name) == 0) {
-            printf("UPF selected based on DNN");
+            ogs_info("UPF selected based on DNN");
             return true;
         }
 
@@ -1123,7 +1123,7 @@ static bool compare_ue_info(ogs_pfcp_node_t *node, smf_sess_t *sess)
         
     for (i = 0; i < node->num_of_nr_cell_id; i++)
         if (node->nr_cell_id[i] == sess->nr_cgi.cell_id) {
-            printf("UPF selected based on cell id\n");
+            ogs_info("UPF selected based on cell id\n");
             return true;
         }
     for (i = 0; i < node->num_of_tac; i++)
@@ -1133,7 +1133,7 @@ static bool compare_ue_info(ogs_pfcp_node_t *node, smf_sess_t *sess)
 
     for (i = 0; i < node->num_of_nssai; i++)
         if (!strcmp(ogs_sbi_s_nssai_to_string(&node->nssai[i]), ogs_sbi_s_nssai_to_string(&sess->s_nssai) )) {
-            printf("UPF selected based on NSSAI\n");
+            ogs_info("UPF selected based on NSSAI\n");
             return true;
         }
     return false;
@@ -1449,7 +1449,7 @@ smf_sess_t *smf_sess_add_by_psi(smf_ue_t *smf_ue, uint8_t psi)
             sizeof(sess->smf_n4_seid), sess);
 
     /* Set SmContextRef in 5GC */
-    sess->sm_context_ref = ogs_msprintf("%d", sess->index);
+    sess->sm_context_ref = ogs_msogs_info("%d", sess->index);
     ogs_assert(sess->sm_context_ref);
 
     /* Create BAR in PFCP Session */
