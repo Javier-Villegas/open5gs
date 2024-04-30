@@ -1111,23 +1111,31 @@ static bool compare_ue_info(ogs_pfcp_node_t *node, smf_sess_t *sess)
     ogs_assert(sess->session.name);
 
     for (i = 0; i < node->num_of_dnn; i++)
-        if (ogs_strcasecmp(node->dnn[i], sess->session.name) == 0) return true;
+        if (ogs_strcasecmp(node->dnn[i], sess->session.name) == 0) {
+            printf("UPF selected based on DNN");
+            return true;
+        }
 
     for (i = 0; i < node->num_of_e_cell_id; i++)
         if (sess->gtp_rat_type == OGS_GTP2_RAT_TYPE_EUTRAN &&
-                node->e_cell_id[i] == sess->e_cgi.cell_id) return true;
-
+                node->e_cell_id[i] == sess->e_cgi.cell_id) 
+            return true;
+        
     for (i = 0; i < node->num_of_nr_cell_id; i++)
-        if (node->nr_cell_id[i] == sess->nr_cgi.cell_id) return true;
-
+        if (node->nr_cell_id[i] == sess->nr_cgi.cell_id) {
+            printf("UPF selected based on cell id\n");
+            return true;
+        }
     for (i = 0; i < node->num_of_tac; i++)
         if ((sess->gtp_rat_type == OGS_GTP2_RAT_TYPE_EUTRAN &&
                 node->tac[i] == sess->e_tai.tac) ||
             (node->tac[i] == sess->nr_tai.tac.v)) return true;
 
     for (i = 0; i < node->num_of_nssai; i++)
-        if (!strcmp(ogs_sbi_s_nssai_to_string(&node->nssai[i]), ogs_sbi_s_nssai_to_string(&sess->s_nssai) )) return true;
-
+        if (!strcmp(ogs_sbi_s_nssai_to_string(&node->nssai[i]), ogs_sbi_s_nssai_to_string(&sess->s_nssai) )) {
+            printf("UPF selected based on NSSAI\n");
+            return true;
+        }
     return false;
 }
 
