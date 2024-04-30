@@ -684,6 +684,7 @@ int ogs_pfcp_context_parse_config(const char *local, const char *remote)
                                                         YAML_SEQUENCE_NODE);
                                             } else if (!strcmp(remote_key, "nssai")) {
                                                 int num_of_slice = 0;
+                                                ogs_info("Parsing NSSAI");
 
 
                                                 ogs_yaml_iter_t nssai_iter, nssai_array;
@@ -755,6 +756,7 @@ int ogs_pfcp_context_parse_config(const char *local, const char *remote)
                                                         
                                                     }
                                                 } while (ogs_yaml_iter_type(&nssai_array) == YAML_SEQUENCE_NODE);
+                                                ogs_info("Number of slices: %d\n",num_of_slice);
                                             } else
                                                 ogs_warn("unknown key `%s`",
                                                         remote_key);
