@@ -104,6 +104,9 @@ typedef struct ogs_pfcp_node_s {
     uint8_t         num_of_e_cell_id;
     uint64_t        nr_cell_id[OGS_MAX_NUM_OF_CELL_ID];
     uint8_t         num_of_nr_cell_id;
+    ogs_s_nssai_t   nssai[OGS_MAX_NUM_OF_SLICE_SUPPORT];
+    uint8_t         num_of_nssai;
+
 
     uint32_t        remote_recovery; /* UTC time */
     bool            restoration_required;

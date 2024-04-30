@@ -1125,6 +1125,9 @@ static bool compare_ue_info(ogs_pfcp_node_t *node, smf_sess_t *sess)
                 node->tac[i] == sess->e_tai.tac) ||
             (node->tac[i] == sess->nr_tai.tac.v)) return true;
 
+    for (i = 0; i < node->num_of_nssai; i++)
+        if (!strcmp(ogs_sbi_s_nssai_to_string(&node->nssai[i]), ogs_sbi_s_nssai_to_string(&sess->s_nssai) )) return true;
+
     return false;
 }
 

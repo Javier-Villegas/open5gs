@@ -463,6 +463,9 @@ int ogs_pfcp_context_parse_config(const char *local, const char *remote)
                                             OGS_MAX_NUM_OF_CELL_ID] = {0,};
                                         int num_of_nr_cell_id = 0;
 
+                                        int num_of_slice = 0;
+                                        ogs_s_nssai_t s_nssais[OGS_MAX_NUM_OF_SLICE];
+
                                         if (ogs_yaml_iter_type(&remote_array) ==
                                                 YAML_MAPPING_NODE) {
                                             memcpy(&remote_iter, &remote_array,
@@ -679,6 +682,79 @@ int ogs_pfcp_context_parse_config(const char *local, const char *remote)
                                                 } while (ogs_yaml_iter_type(
                                                         &nr_cell_id_iter) ==
                                                         YAML_SEQUENCE_NODE);
+                                            } else if (!strcmp(remote_key, "nssai")) {
+                                                int num_of_slice = 0;
+
+
+                                                ogs_yaml_iter_t nssai_iter, nssai_array;
+                                                ogs_yaml_iter_recurse(&remote_iter, &nssai_array);
+
+                                                do {
+                                                    ogs_s_nssai_t *s_nssai = NULL;
+                                                    const char *sst = NULL, *sd = NULL;
+                                                    int num_of_dnn = 0;
+                                                    printf("Parsing NSSAI\n");
+
+
+                                                    ogs_assert(num_of_slice < OGS_MAX_NUM_OF_SLICE);
+                                                    s_nssai = &s_nssais[num_of_slice];
+
+                                                    if (ogs_yaml_iter_type(&nssai_array) == YAML_MAPPING_NODE) {
+                                                        memcpy(&nssai_iter, &nssai_array, sizeof(ogs_yaml_iter_t));
+                                                    } else if (ogs_yaml_iter_type(&nssai_array) == YAML_SEQUENCE_NODE) {
+                                                        if (!ogs_yaml_iter_next(&nssai_array))
+                                                            break;
+                                                        ogs_yaml_iter_recurse(&nssai_array, &nssai_iter);
+                                                    } else if (ogs_yaml_iter_type(&nssai_array) == YAML_SCALAR_NODE) {
+                                                        break;
+                                                    } else 
+                                                        ogs_assert_if_reached();
+
+                                                    while(ogs_yaml_iter_next(&nssai_iter)) {
+                                                        const char *s_nssai_key = ogs_yaml_iter_key(&nssai_iter);
+                                                        ogs_assert(s_nssai_key);
+                                                        if (!strcmp(s_nssai_key, "sst")) {
+                                                            sst = ogs_yaml_iter_value(&nssai_iter);
+                                                        } else if (!strcmp(s_nssai_key, "sd")) {
+                                                            sd = ogs_yaml_iter_value(&nssai_iter);
+                                                        } else if (!strcmp(s_nssai_key, "dnn")) {
+                                                            ogs_yaml_iter_t dnn_iter;
+                                                            ogs_yaml_iter_recurse(&nssai_iter, &dnn_iter);
+                                                            ogs_assert(ogs_yaml_iter_type(&dnn_iter) != YAML_MAPPING_NODE);
+
+                                                            do {
+                                                                const char *v = NULL;
+                                                                if (ogs_yaml_iter_type(&dnn_iter) == YAML_SEQUENCE_NODE) {
+                                                                    if (!ogs_yaml_iter_next(&dnn_iter))
+                                                                        break;
+                                                                }
+
+                                                                v = ogs_yaml_iter_value(&dnn_iter);
+                                                                if (v) {
+                                                                    ogs_assert(num_of_dnn < OGS_MAX_NUM_OF_DNN);
+                                                                    dnn[num_of_dnn++] = v;
+                                                                }
+                                                            } while(ogs_yaml_iter_type(&dnn_iter) == YAML_SEQUENCE_NODE);
+
+                                                        }
+                                                    }
+
+                                                    if (sst) {
+                                                        int i;
+                                                        s_nssai->sst = atoi(sst);
+                                                        if (sd) {
+                                                            s_nssai->sd = ogs_uint24_from_string((char *)sd);
+                                                        } else s_nssai->sd.v = OGS_S_NSSAI_NO_SD_VALUE;
+
+                                                        ogs_assert(num_of_dnn < OGS_MAX_NUM_OF_DNN);
+
+                                                        for (i = 0; i < num_of_dnn; i++) {
+
+                                                        }
+                                                        num_of_slice++;
+                                                        
+                                                    }
+                                                } while (ogs_yaml_iter_type(&nssai_array) == YAML_SEQUENCE_NODE);
                                             } else
                                                 ogs_warn("unknown key `%s`",
                                                         remote_key);
@@ -727,6 +803,10 @@ int ogs_pfcp_context_parse_config(const char *local, const char *remote)
                                         if (num_of_nr_cell_id != 0)
                                             memcpy(node->nr_cell_id, nr_cell_id,
                                                     sizeof(node->nr_cell_id));
+                                        
+                                        node->num_of_nssai = num_of_slice;
+                                        if (num_of_slice != 0)
+                                            memcpy(node->nssai, s_nssais, sizeof(node->nssai));
 
                                     } while (ogs_yaml_iter_type(
                                                 &remote_array) ==
