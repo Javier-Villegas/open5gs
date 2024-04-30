@@ -683,7 +683,6 @@ int ogs_pfcp_context_parse_config(const char *local, const char *remote)
                                                         &nr_cell_id_iter) ==
                                                         YAML_SEQUENCE_NODE);
                                             } else if (!strcmp(remote_key, "nssai")) {
-                                                int num_of_slice = 0;
                                                 ogs_info("Parsing NSSAI");
 
 
