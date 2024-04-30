@@ -1449,7 +1449,7 @@ smf_sess_t *smf_sess_add_by_psi(smf_ue_t *smf_ue, uint8_t psi)
             sizeof(sess->smf_n4_seid), sess);
 
     /* Set SmContextRef in 5GC */
-    sess->sm_context_ref = ogs_msogs_info("%d", sess->index);
+    sess->sm_context_ref = ogs_msprintf("%d", sess->index);
     ogs_assert(sess->sm_context_ref);
 
     /* Create BAR in PFCP Session */
