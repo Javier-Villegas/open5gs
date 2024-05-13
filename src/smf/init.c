@@ -125,6 +125,7 @@ void smf_terminate(void)
     ogs_thread_destroy(thread);
     ogs_timer_delete(t_termination_holding);
 
+    smf_ue_remove_all();
     smf_gtp_close();
     smf_pfcp_close();
     smf_sbi_close();
