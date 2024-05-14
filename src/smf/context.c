@@ -20,6 +20,9 @@
 #include "context.h"
 #include "gtp-path.h"
 #include "pfcp-path.h"
+#include "sbi-path.h"
+#include "namf-build.h"
+#include "ngap-build.h"
 
 static smf_context_t self;
 static ogs_diam_config_t g_diam_conf;
@@ -1691,6 +1694,18 @@ void smf_sess_remove(smf_sess_t *sess)
             sess->session.name, sess->psi,
             sess->ipv4 ? OGS_INET_NTOP(&sess->ipv4->addr, buf1) : "",
             sess->ipv6 ? OGS_INET6_NTOP(&sess->ipv6->addr, buf2) : "");
+
+
+    smf_n1_n2_message_transfer_param_t param;
+
+    memset(&param, 0, sizeof(param));
+    param.state = SMF_NETWORK_TRIGGERED_SERVICE_REQUEST;
+    param.n2smbuf = ngap_build_pdu_session_resource_setup_request_transfer(sess);
+    ogs_assert(param.n2smbuf);
+
+    param.n1n2_failure_txf_notif_uri = true;
+
+    smf_namf_comm_send_n1_n2_message_transfer(sess, &param);
 
     ogs_list_remove(&smf_ue->sess_list, sess);
 
