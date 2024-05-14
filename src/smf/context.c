@@ -23,6 +23,7 @@
 #include "sbi-path.h"
 #include "namf-build.h"
 #include "ngap-build.h"
+#include "unistd.h" 
 
 static smf_context_t self;
 static ogs_diam_config_t g_diam_conf;
@@ -1707,6 +1708,7 @@ void smf_sess_remove(smf_sess_t *sess)
     param.n1n2_failure_txf_notif_uri = true;
 
     smf_namf_comm_send_n1_n2_message_transfer(sess, &param);
+    sleep(1);
 
     ogs_list_remove(&smf_ue->sess_list, sess);
 
