@@ -1700,7 +1700,8 @@ void smf_sess_remove(smf_sess_t *sess)
 
     memset(&param, 0, sizeof(param));
     param.state = SMF_NETWORK_TRIGGERED_SERVICE_REQUEST;
-    param.n2smbuf = ngap_build_pdu_session_resource_setup_request_transfer(sess);
+    param.n2smbuf = ngap_build_pdu_session_resource_release_command_transfer(sess, SMF_NGAP_STATE_DELETE_TRIGGER_SMF_INITIATED,
+            NGAP_Cause_PR_nas, NGAP_CauseNas_normal_release);
     ogs_assert(param.n2smbuf);
 
     param.n1n2_failure_txf_notif_uri = true;
